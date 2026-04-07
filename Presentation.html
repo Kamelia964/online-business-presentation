@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Empire | Kamelia & Aya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8E2DE2;
+            --secondary: #4A00E0;
+            --accent: #00f2fe;
+            --bg: #030303;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; perspective: 1000px; }
+        .bg-gradient { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #030303 100%); z-index: -2; }
+        .blob { position: absolute; width: 600px; height: 600px; background: var(--primary); filter: blur(180px); border-radius: 50%; opacity: 0.15; animation: blobMove 25s infinite alternate ease-in-out; z-index: -1; }
+        @keyframes blobMove { 0% { transform: translate(-20%, -20%) scale(1); } 50% { transform: translate(30%, 30%) scale(1.1); } 100% { transform: translate(-10%, 10%) scale(1); } }
+        
+        .container { width: 96vw; height: 92vh; background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 35px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
+
+        .slide { position: absolute; inset: 0; padding: 70px 90px; display: none; grid-template-columns: 1.1fr 0.9fr; gap: 70px; align-items: center; }
+        .slide.active { display: grid; animation: slideIn 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(15px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+
+        .slide.active .anim-1 { animation: contentIn 0.6s 0.2s ease forwards; opacity: 0; }
+        .slide.active .anim-2 { animation: contentIn 0.6s 0.4s ease forwards; opacity: 0; }
+        .slide.active .anim-3 { animation: contentIn 0.6s 0.6s ease forwards; opacity: 0; }
+        @keyframes contentIn { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 4.5rem; font-weight: 800; line-height: 0.95; margin-bottom: 25px; letter-spacing: -3px; }
+        h1 span { background: linear-gradient(135deg, var(--primary) 0%, #a855f7 50%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: gradientMove 4s linear infinite; }
+        @keyframes gradientMove { to { background-position: 200% center; } }
+        
+        h2 { font-size: 3rem; font-weight: 700; margin-bottom: 25px; letter-spacing: -2px; color: #f1f5f9; }
+        h2 span { color: var(--accent); }
+        p { font-size: 1.2rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 25px; font-weight: 300; }
+
+        .list-item { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 15px; margin-bottom: 12px; border: 1px solid var(--border); font-size: 1.2rem; font-weight: 500; transition: var(--transition); display: flex; align-items: center; gap: 15px; }
+        .list-item:hover { background: rgba(255,255,255,0.07); transform: translateX(10px); border-color: var(--primary); }
+        .list-item strong { color: var(--accent); }
+
+        .img-container { width: 100%; height: 500px; border-radius: 25px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 70px rgba(0,0,0,0.7); transition: var(--transition); transform-style: preserve-3d; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .strategy-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+        .strat-card { background: rgba(255,255,255,0.03); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; transition: var(--transition); }
+        .strat-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.08); border-color: var(--accent); }
+        .strat-card h3 { color: var(--accent); font-size: 1.5rem; margin-bottom: 10px; }
+
+        .progress-bar { position: absolute; bottom: 0; left: 0; height: 5px; background: linear-gradient(to right, var(--primary), var(--accent)); transition: width 0.5s ease; }
+        .nav { position: absolute; bottom: 40px; right: 70px; display: flex; gap: 15px; z-index: 10; }
+        .btn { background: transparent; color: white; border: 1px solid var(--border); padding: 15px 35px; border-radius: 50px; font-weight: 700; cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px); }
+        .btn:hover { background: white; color: black; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient"></div>
+    <div class="blob"></div>
+
+    <div class="container">
+        <div class="progress-bar" id="bar"></div>
+
+        <section class="slide active">
+            <div>
+                <h1 class="anim-1">Start Your <span>Online Empire</span></h1>
+                <p class="anim-2">Learn how to build a business from zero. We will show you the simple roadmap to digital success.</p>
+                <p class="anim-3" style="color:white; font-weight:700; border-top: 1px solid var(--border); padding-top: 15px; display:inline-block;"><strong>Kamelia & Aya</strong></p>
+            </div>
+            <div class="img-container anim-2" data-tilt>
+                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop" alt="Business">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div>
+                <h2 class="anim-1">Why Go <span>Online?</span></h2>
+                <div class="anim-2">
+                    <div class="list-item"><strong>No Rent:</strong> Save money on physical stores.</div>
+                    <div class="list-item"><strong>Global:</strong> Sell to millions from your laptop.</div>
+                    <div class="list-item"><strong>24/7:</strong> Your business makes money while you sleep.</div>
+                </div>
+            </div>
+            <div class="img-container anim-3" data-tilt>
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop" alt="Global">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div>
+                <h2 class="anim-1">1. Market <span>Research</span></h2>
+                <p class="anim-2">Before selling, you must find a problem that people want to solve.</p>
+                <div class="anim-3">
+                    <div class="list-item">Check the competition.</div>
+                    <div class="list-item">Identify your "ideal" customer.</div>
+                    <div class="list-item">Find a unique product gap.</div>
+                </div>
+            </div>
+            <div class="img-container anim-2" data-tilt>
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop" alt="Research">
+            </div>
+        </section>
+
+        <section class="slide" style="grid-template-columns: 1fr; text-align: center;">
+            <div>
+                <h2 class="anim-1">2. Choose Your <span>Strategy</span></h2>
+                <p class="anim-2">There are many ways to make money online. Here are the top three:</p>
+                <div class="strategy-cards anim-3">
+                    <div class="strat-card">
+                        <h3>E-Commerce</h3>
+                        <p>Selling physical goods online.</p>
+                    </div>
+                    <div class="strat-card" style="border-color: var(--primary);">
+                        <h3>SaaS / Apps</h3>
+                        <p>Providing tools or digital services.</p>
+                    </div>
+                    <div class="strat-card">
+                        <h3>Digital Goods</h3>
+                        <p>Selling courses or e-books.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div>
+                <h2 class="anim-1">3. The <span>Setup</span></h2>
+                <div class="anim-2">
+                    <div class="list-item"><strong>Domain:</strong> Choose a catchy brand name.</div>
+                    <div class="list-item"><strong>Platform:</strong> Use Shopify or WordPress.</div>
+                    <div class="list-item"><strong>Payments:</strong> Connect PayPal or Stripe.</div>
+                </div>
+            </div>
+            <div class="img-container anim-3" data-tilt>
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&auto=format&fit=crop" alt="Setup">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div>
+                <h2 class="anim-1">4. Get <span>Customers</span></h2>
+                <div class="anim-2">
+                    <div class="list-item"><strong>SEO:</strong> Rank high on Google search.</div>
+                    <div class="list-item"><strong>Social Media:</strong> Use Instagram & TikTok.</div>
+                    <div class="list-item"><strong>Consistency:</strong> Post every day to build trust.</div>
+                </div>
+            </div>
+            <div class="img-container anim-3" data-tilt>
+                <img src="https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=1200&auto=format&fit=crop" alt="Marketing">
+            </div>
+        </section>
+
+        <section class="slide" style="grid-template-columns: 1fr; text-align: center;">
+            <div>
+                <h1 style="font-size: 6rem;" class="anim-1">Start <span>Today.</span></h1>
+                <p class="anim-2">An online business is more than money. It is freedom. Thank you!</p>
+                <button class="btn anim-3" onclick="location.reload()">Replay</button>
+            </div>
+        </section>
+
+        <div class="nav">
+            <button class="btn" id="prev">Back</button>
+            <button class="btn" id="next">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const next = document.getElementById('next');
+        const prev = document.getElementById('prev');
+        const bar = document.getElementById('bar');
+        let current = 0;
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            bar.style.width = ((current + 1) / slides.length) * 100 + "%";
+        }
+
+        next.onclick = () => { if(current < slides.length-1) { current++; update(); } }
+        prev.onclick = () => { if(current > 0) { current--; update(); } }
+        
+        document.onkeydown = (e) => {
+            if(e.key === "ArrowRight") next.onclick();
+            if(e.key === "ArrowLeft") prev.onclick();
+        }
+
+        const tiltElements = document.querySelectorAll('[data-tilt]');
+        tiltElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateX = ((y - rect.height/2) / (rect.height/2)) * -8;
+                const rotateY = ((x - rect.width/2) / (rect.width/2)) * 8;
+                el.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            el.addEventListener('mouseleave', () => { el.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)'; });
+        });
+    </script>
+</body>
+</html>
